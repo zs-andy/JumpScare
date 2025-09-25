@@ -33,17 +33,25 @@ struct FloatingGifWindow {
         window.hidesOnDeactivate = false
         
     }
+    
+    private var flashWindow: FlashWindow = FlashWindow()
 
-    func show(duration: TimeInterval = 2.0) {
+    func show(duration: TimeInterval = 4.0) {
         if let screen = NSScreen.main {
             let screenFrame = screen.visibleFrame
             let x = screenFrame.midX - window.frame.width / 2
             let y = screenFrame.midY - window.frame.height / 2
             window.setFrameOrigin(NSPoint(x: x, y: y))
         }
-        window.makeKeyAndOrderFront(nil)
+        flashWindow.startFlashing()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            window.makeKeyAndOrderFront(nil)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+           flashWindow.stopFlashing()
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-            window.orderOut(nil)
+           window.orderOut(nil)
         }
     }
 }
